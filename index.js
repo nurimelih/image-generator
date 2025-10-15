@@ -2,11 +2,36 @@ import fs from 'fs';
 import path from 'path';
 import {fileURLToPath} from 'url';
 import {spawn} from 'child_process';
+import {hostname, userInfo} from 'os';
+import {createHash} from 'crypto';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const generateSolidColorImageFile = ({width = 320, height = 320, patternMode = 'random'} = {}) => {
+// Makineye özgü parmak izi oluştur
+const getMachineFingerprint = () => {
+    const machineId = `${hostname()}-${userInfo().username}`;
+    const hash = createHash('sha256').update(machineId).digest('hex');
+
+    // Hash'i sayıya dönüştür (0-1 arası)
+    const seed = parseInt(hash.substring(0, 8), 16) / 0xffffffff;
+
+    return {
+        id: machineId,
+        hash: hash,
+        seed: seed,
+        // Makineye özgü stil parametreleri
+        preferredPatternBias: seed, // 0-1 arası, hangi pattern'lara yatkın
+        colorWarmth: seed, // Sıcak vs soğuk renkler
+        contrastLevel: 0.3 + seed * 0.4, // 0.3-0.7 arası kontrast
+        noiseIntensity: 0.05 + seed * 0.1, // 0.05-0.15 arası noise
+        symmetryPreference: seed > 0.5 // Simetrik desenler mi tercih ediyor
+    };
+};
+
+const MACHINE_FINGERPRINT = getMachineFingerprint();
+
+const generateSolidColorImageFile = ({width = 320, height = 320, patternMode = 'random', useSignature = false} = {}) => {
     const headerSize = 54;
     const imageSize = width * height * 3;
     const fileSize = headerSize + imageSize;
@@ -242,6 +267,26 @@ const generateSolidColorImageFile = ({width = 320, height = 320, patternMode = '
         return true;
     };
 
+    // Makine parmak izine göre renk tercihleri (sadece signature modunda)
+    const warmPalettes = [0, 1, 6, 8, 11, 12, 16, 19]; // Sıcak renk paletleri
+    const coolPalettes = [2, 3, 7, 9, 13, 14, 17, 18]; // Soğuk renk paletleri
+    const mixedPalettes = [4, 5, 10, 15, 20]; // Karışık
+
+    // Makine tercihine göre palet havuzu oluştur
+    let preferredPalettes;
+    if (useSignature) {
+        if (MACHINE_FINGERPRINT.colorWarmth < 0.35) {
+            preferredPalettes = [...coolPalettes, ...mixedPalettes];
+        } else if (MACHINE_FINGERPRINT.colorWarmth > 0.65) {
+            preferredPalettes = [...warmPalettes, ...mixedPalettes];
+        } else {
+            preferredPalettes = [...warmPalettes, ...coolPalettes, ...mixedPalettes];
+        }
+    } else {
+        // Signature kapalı - tüm paletler
+        preferredPalettes = [...warmPalettes, ...coolPalettes, ...mixedPalettes];
+    }
+
     // Renk paleti seçim modu: %40 doğrudan palet, %40 karışık, %20 tamamen rastgele
     const paletteMode = Math.random();
     let selectedPalette;
@@ -252,8 +297,9 @@ const generateSolidColorImageFile = ({width = 320, height = 320, patternMode = '
         attempts++;
 
         if (paletteMode < 0.4) {
-            // Doğrudan bir palet seç
-            selectedPalette = colorPalettes[Math.floor(Math.random() * colorPalettes.length)];
+            // Doğrudan bir palet seç - makine tercihine göre
+            const paletteIndex = preferredPalettes[Math.floor(Math.random() * preferredPalettes.length)];
+            selectedPalette = colorPalettes[paletteIndex];
         } else if (paletteMode < 0.8) {
             // Farklı paletlerden rastgele renkler karıştır
             const paletteSize = 4 + Math.floor(Math.random() * 3); // 4-6 renk
@@ -333,16 +379,45 @@ const generateSolidColorImageFile = ({width = 320, height = 320, patternMode = '
         };
     };
 
-    // Pattern seçimi - Mandelbrot'a %60 ağırlık
+    // Pattern seçimi - Mandelbrot'a %60 ağırlık + makine tercihi (opsiyonel)
     let patternType;
     if (patternMode === 'mandelbrot') {
         patternType = 0; // Mandelbrot
     } else if (patternMode === 'random') {
         const patternRandom = Math.random();
-        if (patternRandom < 0.6) {
-            patternType = 0; // %60 Mandelbrot
+
+        // Makine parmak izine göre pattern tercihleri (sadece signature modunda)
+        if (useSignature && MACHINE_FINGERPRINT.symmetryPreference) {
+            // Simetrik desenler tercih ediyor: Mandelbrot, Spiral, Çoklu merkez
+            if (patternRandom < 0.5) {
+                patternType = 0; // Mandelbrot
+            } else if (patternRandom < 0.7) {
+                patternType = 2; // Spiral
+            } else if (patternRandom < 0.85) {
+                patternType = 5; // Çoklu merkez
+            } else {
+                patternType = 1 + Math.floor(Math.random() * 5); // Diğerleri
+            }
+        } else if (useSignature && !MACHINE_FINGERPRINT.symmetryPreference) {
+            // Asimetrik/akışkan desenler tercih ediyor
+            if (patternRandom < 0.4) {
+                patternType = 0; // Mandelbrot
+            } else if (patternRandom < 0.6) {
+                patternType = 1; // Dalga
+            } else if (patternRandom < 0.8) {
+                patternType = 3; // Akışkan şeritler
+            } else if (patternRandom < 0.9) {
+                patternType = 4; // Çapraz
+            } else {
+                patternType = 2 + Math.floor(Math.random() * 4); // Diğerleri
+            }
         } else {
-            patternType = 1 + Math.floor(Math.random() * 5); // %40 diğerleri (1-5)
+            // Signature kapalı - normal dağılım
+            if (patternRandom < 0.6) {
+                patternType = 0; // %60 Mandelbrot
+            } else {
+                patternType = 1 + Math.floor(Math.random() * 5); // %40 diğerleri (1-5)
+            }
         }
     } else {
         patternType = Math.floor(Math.random() * 6);
@@ -481,6 +556,21 @@ const generateSolidColorImageFile = ({width = 320, height = 320, patternMode = '
             // Normalize t to [0, 1]
             t = Math.max(0, Math.min(1, t));
 
+            // Makineye özgü kontrast ve noise (sadece signature modunda)
+            if (useSignature) {
+                // contrastLevel: 0.3-0.7 arası
+                const mid = 0.5;
+                t = mid + (t - mid) * (1 + MACHINE_FINGERPRINT.contrastLevel);
+                t = Math.max(0, Math.min(1, t));
+
+                // Makineye özgü hafif noise ekle (tüm desenlere)
+                const noiseX = x * 12.9898 + y * 78.233;
+                const noiseSeed = Math.sin(noiseX + MACHINE_FINGERPRINT.seed * 1000) * 43758.5453;
+                const noise = (noiseSeed - Math.floor(noiseSeed) - 0.5) * MACHINE_FINGERPRINT.noiseIntensity;
+                t = t + noise;
+                t = Math.max(0, Math.min(1, t));
+            }
+
             const color = getColorFromPalette(t);
             const row = height - 1 - y;
             const offset = headerSize + (row * width + x) * 3;
@@ -493,8 +583,8 @@ const generateSolidColorImageFile = ({width = 320, height = 320, patternMode = '
     return bmpData;
 };
 
-const generateImageWithTimestamp = ({width = 320, height = 320, timestamp = new Date(), outputDir = null, patternMode = 'random', frameNumber = null} = {}) => {
-    const bmpData = generateSolidColorImageFile({width, height, patternMode});
+const generateImageWithTimestamp = ({width = 320, height = 320, timestamp = new Date(), outputDir = null, patternMode = 'random', frameNumber = null, useSignature = false} = {}) => {
+    const bmpData = generateSolidColorImageFile({width, height, patternMode, useSignature});
     addDateTimeToImage(bmpData, width, height, 54, timestamp, frameNumber);
 
     const targetDir = outputDir || path.join(__dirname, 'generated');
@@ -783,7 +873,7 @@ const getDefaultFont = () => {
 };
 
 // Video üretme fonksiyonu
-const generateVideo = async ({width, height, duration = 10, fps = 30, outputDir = null, patternMode = 'random'}) => {
+const generateVideo = async ({width, height, duration = 10, fps = 30, outputDir = null, patternMode = 'random', useSignature = false}) => {
     const frameCount = duration * fps;
     const framesDir = path.join(__dirname, 'frames');
 
@@ -797,7 +887,7 @@ const generateVideo = async ({width, height, duration = 10, fps = 30, outputDir 
 
     const startTime = new Date();
     let lastBackgroundChange = 0;
-    let currentBmpData = generateSolidColorImageFile({width, height, patternMode});
+    let currentBmpData = generateSolidColorImageFile({width, height, patternMode, useSignature});
 
     for (let i = 0; i < frameCount; i++) {
         const currentTimeMs = (i / fps) * 1000;
@@ -805,7 +895,7 @@ const generateVideo = async ({width, height, duration = 10, fps = 30, outputDir 
 
         // Her 3 saniyede bir arka plan değişir
         if (Math.floor(currentTimeMs / 1000) > lastBackgroundChange) {
-            currentBmpData = generateSolidColorImageFile({width, height, patternMode});
+            currentBmpData = generateSolidColorImageFile({width, height, patternMode, useSignature});
             lastBackgroundChange = Math.floor(currentTimeMs / 1000);
         }
 
@@ -864,6 +954,7 @@ const args = process.argv.slice(2);
 const isVertical = args.includes('--v') || args.includes('-v');
 const isVideo = args.includes('--video') || args.includes('--mp4');
 const isMandelbrot = args.includes('-m') || args.includes('--mandelbrot');
+const useSignature = args.includes('-s') || args.includes('--signature');
 
 // -d parametresi kontrolü
 let customDir = null;
@@ -893,9 +984,19 @@ const dimensions = isVertical
     ? {width: 480, height: 854}  // 9:16 dikey
     : {width: 640, height: 640};  // kare
 
+// Makine imzası bilgisi (sadece -s parametresi varsa)
+if (useSignature) {
+    console.log(`\nMakine İmzası: ${MACHINE_FINGERPRINT.id}`);
+    console.log(`Stil Tercihleri:`);
+    console.log(`  - Renk Sıcaklığı: ${MACHINE_FINGERPRINT.colorWarmth < 0.35 ? 'Soğuk' : MACHINE_FINGERPRINT.colorWarmth > 0.65 ? 'Sıcak' : 'Dengeli'}`);
+    console.log(`  - Desen Tercihi: ${MACHINE_FINGERPRINT.symmetryPreference ? 'Simetrik' : 'Akışkan'}`);
+    console.log(`  - Kontrast Seviyesi: ${(MACHINE_FINGERPRINT.contrastLevel * 100).toFixed(0)}%`);
+    console.log(`  - Noise Yoğunluğu: ${(MACHINE_FINGERPRINT.noiseIntensity * 100).toFixed(0)}%\n`);
+}
+
 if (isVideo) {
     console.log('Video üretiliyor...');
-    generateVideo({...dimensions, duration: 10, fps: 30, outputDir: customDir, patternMode})
+    generateVideo({...dimensions, duration: 10, fps: 30, outputDir: customDir, patternMode, useSignature})
         .then(filePath => {
             console.log(`Video oluşturuldu: ${filePath}`);
         })
@@ -905,6 +1006,6 @@ if (isVideo) {
         });
 } else {
     console.log('Resim üretiliyor...');
-    const filePath = generateImageWithTimestamp({...dimensions, outputDir: customDir, patternMode, frameNumber});
+    const filePath = generateImageWithTimestamp({...dimensions, outputDir: customDir, patternMode, frameNumber, useSignature});
     console.log(`Resim oluşturuldu: ${filePath}`);
 }
