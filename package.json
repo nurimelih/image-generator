@@ -1,0 +1,27 @@
+{
+  "name": "image-generator",
+  "version": "1.0.0",
+  "description": "Generates unique timestamp images and videos with various patterns (Mandelbrot, waves, spirals, etc.)",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "generate": "node index.js",
+    "vertical": "node index.js -v",
+    "mandelbrot": "node index.js -m",
+    "video": "node index.js --video"
+  },
+  "keywords": [
+    "image-generator",
+    "timestamp",
+    "mandelbrot",
+    "fractal",
+    "video",
+    "bmp"
+  ],
+  "author": "",
+  "license": "ISC",
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
