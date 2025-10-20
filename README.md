@@ -2,17 +2,31 @@
 
 Eşsiz ve dikkat çekici test görselleri üreten gelişmiş bir Node.js uygulaması. Mandelbrot fraktalları ve çeşitli soyut desenlerle zengin renk paletleri kullanarak her seferinde benzersiz görüntüler oluşturur.
 
+**3 Farklı Kullanım Modu:**
+- 🖥️ **Desktop App** - Electron ile modern masaüstü uygulaması
+- 🌐 **Web Interface** - Tarayıcı tabanlı arayüz
+- ⚡ **CLI** - Terminal komut satırı
+
 ## Özellikler
 
+### Görsel Üretim
 - **Çoklu Desen Desteği**: Mandelbrot fraktalları (%60 ağırlık) ve 5 farklı soyut desen
 - **20+ Renk Paleti**: Önceden tanımlanmış paletler, karışık kombinasyonlar ve tamamen rastgele renkler
 - **Akıllı Renk Sistemi**: Birbirine benzeyen renkleri otomatik olarak filtreler, her görsel net şekilde ayırt edilebilir
 - **Makine İmzası** (`-s`): Her bilgisayara özgü görsel stil (renk sıcaklığı, desen tercihi, kontrast, noise)
 - **Zaman Damgası**: Sol alt köşede tarih/saat, ortada milisaniye hassasiyetli zaman damgası
-- **Frame Numarası**: Opsiyonel sağ alt köşe numaralandırma
+- **Özel Metin**: Sağ alt köşeye istediğiniz metni yazabilme (`-f` parametresi)
 - **Video Üretimi**: 10 saniyelik video üretimi (30 FPS) ile her 3 saniyede arkaplan değişimi
 - **Dikey/Yatay Format**: Kare (640x640) veya dikey (480x854) çıktı
 - **Noise Efektleri**: Mandelbrot arkaplanlarında karıncalı TV ve un serpilmiş efektleri
+
+### Desktop App Özellikleri
+- 🎨 Modern, karanlık tema arayüz
+- 📁 Finder entegrasyonu (dosyayı Finder'da göster)
+- 👁 macOS Preview ile hızlı önizleme
+- 🖼️ Uygulama içi görsel/video önizleme
+- 🗑️ Dosya yönetimi (görüntüleme, silme)
+- ⚙️ Tüm parametreleri GUI üzerinden kontrol
 
 ## Kurulum
 
@@ -22,29 +36,73 @@ npm install
 yarn install
 ```
 
+### FFmpeg Kurulumu (Video üretimi için)
+
+```bash
+# macOS
+brew install ffmpeg
+
+# Ubuntu/Debian
+sudo apt install ffmpeg
+
+# Windows
+# https://ffmpeg.org/download.html adresinden indirin
+```
+
 ## Kullanım
 
-### Temel Kullanım
+### 🖥️ Desktop App (Önerilen)
+
+Electron tabanlı masaüstü uygulaması ile görsel arayüz üzerinden kullanım:
+
+```bash
+npm run app
+```
+
+**Özellikler:**
+- Tüm parametreleri dropdown ve checkbox'larla seçin
+- Özel metin alanı ile sağ alt köşeye yazı ekleyin
+- Oluşturulan dosyaları grid görünümünde görün
+- Resimlere tıklayarak app içinde önizleyin
+- 👁 butonu ile macOS Preview'da açın
+- 📁 butonu ile Finder'da gösterin
+- 🗑️ butonu ile silin
+
+### 🌐 Web Interface
+
+Tarayıcı tabanlı kullanım (Desktop App olmadan):
+
+```bash
+npm run web
+```
+
+Tarayıcınızda açın: `http://localhost:3000`
+
+### ⚡ CLI (Command Line)
+
+Terminal üzerinden hızlı kullanım:
+
+#### Temel Kullanım
 
 ```bash
 # Basit resim üretimi (varsayılan: 640x640, rastgele desen)
 node index.js
 ```
 
-### Parametreler
+#### Parametreler
 
 | Parametre | Kısa | Açıklama | Örnek |
 |-----------|------|----------|-------|
 | `--signature` | `-s` | Makineye özgü görsel imza (renk, desen, kontrast tercihleri) | `-s` |
-| `--frame` | `-f` | Sağ alt köşeye frame numarası ekler | `-f 42` |
+| `--frame` | `-f` | Sağ alt köşeye özel metin ekler | `-f "Test 001"` |
 | `--vertical` | `-v` | Dikey format (480x854) | `-v` |
 | `--mandelbrot` | `-m` | Sadece Mandelbrot deseni | `-m` |
 | `--dir` | `-d` | Özel çıktı dizini | `-d ./output` |
 | `--video` | `--mp4` | Video üretimi (10 saniye, 30 FPS) | `--video` |
 
-### Kullanım Örnekleri
+#### Kullanım Örnekleri
 
-#### Resim Üretimi
+**Resim Üretimi**
 
 ```bash
 # Basit resim
@@ -53,8 +111,8 @@ node index.js
 # Makine imzalı resim (tutarlı stil)
 node index.js -s
 
-# Frame numarası ile resim
-node index.js -f 42
+# Özel metin ile resim
+node index.js -f "Frame 042"
 
 # Dikey format resim
 node index.js -v
@@ -68,14 +126,14 @@ node index.js -s -m
 # Özel dizine kaydet
 node index.js -d ./images
 
-# Dikey Mandelbrot, frame 100, özel dizin, makine imzalı
-node index.js -v -m -f 100 -d ./test-images -s
+# Dikey Mandelbrot, özel metin, özel dizin, makine imzalı
+node index.js -v -m -f "Test" -d ./test-images -s
 
-# Yatay, frame numaralı, özel dizin
-node index.js -f 25 -d ~/Desktop/output
+# Yatay, özel metin, özel dizin
+node index.js -f "Sample 25" -d ~/Desktop/output
 ```
 
-#### Video Üretimi
+**Video Üretimi**
 
 ```bash
 # Basit video (10 saniye, 30 FPS, her 3 saniyede arkaplan değişir)
@@ -87,7 +145,7 @@ node index.js -s --video
 # Dikey format video
 node index.js -v --video
 
-# Sadece Mandelbrot videsu
+# Sadece Mandelbrot videosu
 node index.js -m --mp4
 
 # Makine imzalı Mandelbrot videosu
@@ -111,7 +169,7 @@ node index.js -v -m --video -d ~/Movies/test -s
 ### Görsel Elemanlar
 - **Sol Alt Köşe**: Tarih (DD.MM.YYYY) ve Saat (HH:MM:SS)
 - **Orta**: Milisaniye hassasiyetli zaman (HH:MM:SS.mmm)
-- **Sağ Alt Köşe**: Frame numarası (opsiyonel, `-f` ile)
+- **Sağ Alt Köşe**: Özel metin (opsiyonel, `-f` ile)
 
 ### Video Özellikleri
 - **Format**: MP4 (H.264)
@@ -213,11 +271,169 @@ node index.js -s
 - **Tutarlı Stil**: Aynı makineden üretilen tüm görseller benzer atmosfere sahip
 - **Görsel Takip**: Görselin hangi makineden geldiğini stil tercihlerinden anlama
 
+## Derleme ve Dağıtım
+
+### Electron Desktop App Derleme
+
+Electron uygulamasını dağıtılabilir .app veya .exe dosyası olarak derlemek için:
+
+```bash
+# electron-builder yükleyin
+npm install --save-dev electron-builder
+
+# macOS için .app dosyası oluştur
+npm run build:mac
+
+# Windows için .exe dosyası oluştur
+npm run build:win
+
+# Linux için AppImage oluştur
+npm run build:linux
+```
+
+**package.json'a eklenecek build script'leri:**
+
+```json
+{
+  "scripts": {
+    "app": "electron .",
+    "build:mac": "electron-builder --mac",
+    "build:win": "electron-builder --win",
+    "build:linux": "electron-builder --linux"
+  },
+  "build": {
+    "appId": "com.imageGenerator.app",
+    "productName": "Image Generator",
+    "files": [
+      "index.js",
+      "server.js",
+      "electron-main.js",
+      "preload.js",
+      "public/**/*",
+      "node_modules/**/*"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "icon.icns"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "icon.ico"
+    },
+    "linux": {
+      "target": "AppImage",
+      "icon": "icon.png"
+    }
+  }
+}
+```
+
+### Web Server Olarak Deploy
+
+Express sunucusunu production ortamına deploy etmek için:
+
+```bash
+# PM2 ile production'da çalıştır
+npm install -g pm2
+pm2 start server.js --name image-generator
+
+# Nginx reverse proxy ile kullan
+# /etc/nginx/sites-available/image-generator:
+server {
+    listen 80;
+    server_name your-domain.com;
+
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+```
+
+### Docker Container
+
+```dockerfile
+FROM node:18-alpine
+
+# FFmpeg yükle
+RUN apk add --no-cache ffmpeg
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm ci --only=production
+
+COPY . .
+
+EXPOSE 3000
+
+CMD ["node", "server.js"]
+```
+
+```bash
+# Docker image oluştur
+docker build -t image-generator .
+
+# Container çalıştır
+docker run -p 3000:3000 -v $(pwd)/generated:/app/generated image-generator
+```
+
+## NPM Scripts
+
+```bash
+# CLI kullanımı
+npm start              # Basit resim üret
+npm run generate       # Basit resim üret
+npm run vertical       # Dikey resim üret
+npm run mandelbrot     # Mandelbrot resim üret
+npm run video          # Video üret
+
+# Web/Desktop kullanımı
+npm run web            # Web sunucusu başlat (http://localhost:3000)
+npm run app            # Desktop uygulaması başlat
+
+# Derleme (electron-builder gerekli)
+npm run build:mac      # macOS .app oluştur
+npm run build:win      # Windows .exe oluştur
+npm run build:linux    # Linux AppImage oluştur
+```
+
+## Proje Yapısı
+
+```
+image-generator/
+├── index.js              # Ana CLI kodu (görsel/video üretimi)
+├── server.js             # Express web sunucusu
+├── electron-main.js      # Electron ana process
+├── preload.js            # Electron IPC köprüsü
+├── package.json          # Proje yapılandırması
+├── public/
+│   └── index.html        # Web arayüzü
+├── generated/            # Üretilen dosyalar (otomatik oluşturulur)
+└── frames/               # Geçici video frame'leri (otomatik temizlenir)
+```
+
 ## Gereksinimler
 
 - Node.js 14+
 - FFmpeg (sadece video üretimi için)
+- Electron (sadece desktop app için)
 
 ## Lisans
 
 MIT
+
+## Katkıda Bulunma
+
+Pull request'ler kabul edilir. Büyük değişiklikler için lütfen önce bir issue açarak neyi değiştirmek istediğinizi tartışın.
+
+## Destek
+
+Sorun yaşıyorsanız veya öneriniz varsa lütfen GitHub Issues sayfasında bir issue açın.
