@@ -7,6 +7,102 @@ Eşsiz ve dikkat çekici test görselleri üreten gelişmiş bir Node.js uygulam
 - 🌐 **Web Interface** - Tarayıcı tabanlı arayüz
 - ⚡ **CLI** - Terminal komut satırı
 
+---
+
+## 🚀 Hızlı Başlangıç
+
+Projeyi indirdikten sonra 2 adımda çalıştırın:
+
+### 1. Bağımlılıkları Yükleyin
+
+```bash
+npm install
+# veya
+yarn install
+```
+
+> **Not:** Proje hem npm hem de yarn ile uyumludur. İstediğinizi kullanabilirsiniz.
+
+### 2. Tercih Ettiğiniz Modu Başlatın
+
+**Masaüstü Uygulaması (Önerilen - GUI):**
+```bash
+npm run app
+# veya
+yarn app
+```
+
+**Web Arayüzü:**
+```bash
+npm run web
+# veya
+yarn web
+# Tarayıcınızda: http://localhost:3000
+```
+
+**Komut Satırı (Hızlı Test):**
+```bash
+npm start
+# veya
+yarn start
+# veya direkt:
+node index.js
+```
+
+**Video üretimi için FFmpeg gereklidir:**
+```bash
+# macOS
+brew install ffmpeg
+
+# Ubuntu/Debian
+sudo apt install ffmpeg
+
+# Windows - https://ffmpeg.org/download.html
+```
+
+---
+
+## 📦 Kullanıma Hazır Sürüm (Derleme)
+
+Kod yerine direkt çalıştırılabilir uygulama isterseniz:
+
+### Electron Desktop Uygulaması Olarak Derleme
+
+```bash
+# Bağımlılıkları yükleyin (electron-builder dahil)
+npm install  # veya: yarn install
+
+# İşletim sisteminize göre derleyin:
+npm run build:mac      # macOS için .dmg
+yarn build:mac
+
+npm run build:win      # Windows için .exe
+yarn build:win
+
+npm run build:linux    # Linux için AppImage
+yarn build:linux
+```
+
+Derlenen dosyalar `dist/` klasöründe oluşur. Bu dosyaları Node.js olmayan bilgisayarlarda da çalıştırabilirsiniz.
+
+### Alternatif: Standalone Çalıştırma
+
+Node.js yüklü olmayan ortamlarda çalıştırmak için [pkg](https://github.com/vercel/pkg) kullanabilirsiniz:
+
+```bash
+# pkg'yi global yükleyin
+npm install -g pkg
+# veya
+yarn global add pkg
+
+# Tek binary dosya oluşturun
+npm run package:mac   # veya: yarn package:mac
+npm run package:win   # veya: yarn package:win
+npm run package:linux # veya: yarn package:linux
+```
+
+---
+
 ## Özellikler
 
 ### Görsel Üretim
@@ -275,61 +371,22 @@ node index.js -s
 
 ### Electron Desktop App Derleme
 
-Electron uygulamasını dağıtılabilir .app veya .exe dosyası olarak derlemek için:
+Electron uygulamasını dağıtılabilir dosya olarak derlemek için:
 
 ```bash
-# electron-builder yükleyin
-npm install --save-dev electron-builder
+# Bağımlılıkları yükleyin (electron-builder dahil)
+npm install
 
-# macOS için .app dosyası oluştur
-npm run build:mac
+# İşletim sisteminize göre derleyin:
+npm run build:mac      # macOS için .dmg ve .zip
+npm run build:win      # Windows için .exe (NSIS installer ve portable)
+npm run build:linux    # Linux için AppImage ve .deb
 
-# Windows için .exe dosyası oluştur
-npm run build:win
-
-# Linux için AppImage oluştur
-npm run build:linux
+# Tüm platformlar için (sadece macOS'ta çalışır):
+npm run build:all
 ```
 
-**package.json'a eklenecek build script'leri:**
-
-```json
-{
-  "scripts": {
-    "app": "electron .",
-    "build:mac": "electron-builder --mac",
-    "build:win": "electron-builder --win",
-    "build:linux": "electron-builder --linux"
-  },
-  "build": {
-    "appId": "com.imageGenerator.app",
-    "productName": "Image Generator",
-    "files": [
-      "index.js",
-      "server.js",
-      "electron-main.js",
-      "preload.js",
-      "public/**/*",
-      "node_modules/**/*"
-    ],
-    "directories": {
-      "output": "dist"
-    },
-    "mac": {
-      "target": "dmg",
-      "icon": "icon.icns"
-    },
-    "win": {
-      "target": "nsis",
-      "icon": "icon.ico"
-    },
-    "linux": {
-      "target": "AppImage",
-      "icon": "icon.png"
-    }
-  }
-}
-```
+Derlenen dosyalar `dist/` klasöründe oluşur ve Node.js olmayan sistemlerde de çalışır.
 
 ### Web Server Olarak Deploy
 
@@ -385,24 +442,53 @@ docker build -t image-generator .
 docker run -p 3000:3000 -v $(pwd)/generated:/app/generated image-generator
 ```
 
-## NPM Scripts
+## NPM / Yarn Scripts
+
+Tüm komutlar hem `npm run` hem de `yarn` ile çalışır:
 
 ```bash
 # CLI kullanımı
 npm start              # Basit resim üret
-npm run generate       # Basit resim üret
+yarn start
+
 npm run vertical       # Dikey resim üret
+yarn vertical
+
 npm run mandelbrot     # Mandelbrot resim üret
+yarn mandelbrot
+
 npm run video          # Video üret
+yarn video
 
 # Web/Desktop kullanımı
 npm run web            # Web sunucusu başlat (http://localhost:3000)
-npm run app            # Desktop uygulaması başlat
+yarn web
 
-# Derleme (electron-builder gerekli)
-npm run build:mac      # macOS .app oluştur
-npm run build:win      # Windows .exe oluştur
-npm run build:linux    # Linux AppImage oluştur
+npm run app            # Desktop uygulaması başlat
+yarn app
+
+# Electron derleme
+npm run build:mac      # macOS için .dmg ve .zip
+yarn build:mac
+
+npm run build:win      # Windows için .exe (installer + portable)
+yarn build:win
+
+npm run build:linux    # Linux için AppImage ve .deb
+yarn build:linux
+
+npm run build:all      # Tüm platformlar için derleme
+yarn build:all
+
+# Standalone binary derleme (pkg gerekli)
+npm run package:mac    # macOS için tek dosya
+yarn package:mac
+
+npm run package:win    # Windows için tek dosya
+yarn package:win
+
+npm run package:linux  # Linux için tek dosya
+yarn package:linux
 ```
 
 ## Proje Yapısı
