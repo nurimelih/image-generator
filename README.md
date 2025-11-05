@@ -17,18 +17,26 @@ Projeyi indirdikten sonra 2 adımda çalıştırın:
 
 ```bash
 npm install
+# veya
+yarn install
 ```
+
+> **Not:** Proje hem npm hem de yarn ile uyumludur. İstediğinizi kullanabilirsiniz.
 
 ### 2. Tercih Ettiğiniz Modu Başlatın
 
 **Masaüstü Uygulaması (Önerilen - GUI):**
 ```bash
 npm run app
+# veya
+yarn app
 ```
 
 **Web Arayüzü:**
 ```bash
 npm run web
+# veya
+yarn web
 # Tarayıcınızda: http://localhost:3000
 ```
 
@@ -36,6 +44,8 @@ npm run web
 ```bash
 npm start
 # veya
+yarn start
+# veya direkt:
 node index.js
 ```
 
@@ -59,13 +69,18 @@ Kod yerine direkt çalıştırılabilir uygulama isterseniz:
 ### Electron Desktop Uygulaması Olarak Derleme
 
 ```bash
-# electron-builder'ı yükleyin (tek seferlik)
-npm install
+# Bağımlılıkları yükleyin (electron-builder dahil)
+npm install  # veya: yarn install
 
 # İşletim sisteminize göre derleyin:
 npm run build:mac      # macOS için .dmg
+yarn build:mac
+
 npm run build:win      # Windows için .exe
+yarn build:win
+
 npm run build:linux    # Linux için AppImage
+yarn build:linux
 ```
 
 Derlenen dosyalar `dist/` klasöründe oluşur. Bu dosyaları Node.js olmayan bilgisayarlarda da çalıştırabilirsiniz.
@@ -77,11 +92,13 @@ Node.js yüklü olmayan ortamlarda çalıştırmak için [pkg](https://github.co
 ```bash
 # pkg'yi global yükleyin
 npm install -g pkg
+# veya
+yarn global add pkg
 
 # Tek binary dosya oluşturun
-npm run package:mac
-npm run package:win
-npm run package:linux
+npm run package:mac   # veya: yarn package:mac
+npm run package:win   # veya: yarn package:win
+npm run package:linux # veya: yarn package:linux
 ```
 
 ---
@@ -425,30 +442,53 @@ docker build -t image-generator .
 docker run -p 3000:3000 -v $(pwd)/generated:/app/generated image-generator
 ```
 
-## NPM Scripts
+## NPM / Yarn Scripts
+
+Tüm komutlar hem `npm run` hem de `yarn` ile çalışır:
 
 ```bash
 # CLI kullanımı
 npm start              # Basit resim üret
-npm run generate       # Basit resim üret
+yarn start
+
 npm run vertical       # Dikey resim üret
+yarn vertical
+
 npm run mandelbrot     # Mandelbrot resim üret
+yarn mandelbrot
+
 npm run video          # Video üret
+yarn video
 
 # Web/Desktop kullanımı
 npm run web            # Web sunucusu başlat (http://localhost:3000)
+yarn web
+
 npm run app            # Desktop uygulaması başlat
+yarn app
 
 # Electron derleme
 npm run build:mac      # macOS için .dmg ve .zip
+yarn build:mac
+
 npm run build:win      # Windows için .exe (installer + portable)
+yarn build:win
+
 npm run build:linux    # Linux için AppImage ve .deb
+yarn build:linux
+
 npm run build:all      # Tüm platformlar için derleme
+yarn build:all
 
 # Standalone binary derleme (pkg gerekli)
 npm run package:mac    # macOS için tek dosya
+yarn package:mac
+
 npm run package:win    # Windows için tek dosya
+yarn package:win
+
 npm run package:linux  # Linux için tek dosya
+yarn package:linux
 ```
 
 ## Proje Yapısı
