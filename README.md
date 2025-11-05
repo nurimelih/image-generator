@@ -7,6 +7,85 @@ Eşsiz ve dikkat çekici test görselleri üreten gelişmiş bir Node.js uygulam
 - 🌐 **Web Interface** - Tarayıcı tabanlı arayüz
 - ⚡ **CLI** - Terminal komut satırı
 
+---
+
+## 🚀 Hızlı Başlangıç
+
+Projeyi indirdikten sonra 2 adımda çalıştırın:
+
+### 1. Bağımlılıkları Yükleyin
+
+```bash
+npm install
+```
+
+### 2. Tercih Ettiğiniz Modu Başlatın
+
+**Masaüstü Uygulaması (Önerilen - GUI):**
+```bash
+npm run app
+```
+
+**Web Arayüzü:**
+```bash
+npm run web
+# Tarayıcınızda: http://localhost:3000
+```
+
+**Komut Satırı (Hızlı Test):**
+```bash
+npm start
+# veya
+node index.js
+```
+
+**Video üretimi için FFmpeg gereklidir:**
+```bash
+# macOS
+brew install ffmpeg
+
+# Ubuntu/Debian
+sudo apt install ffmpeg
+
+# Windows - https://ffmpeg.org/download.html
+```
+
+---
+
+## 📦 Kullanıma Hazır Sürüm (Derleme)
+
+Kod yerine direkt çalıştırılabilir uygulama isterseniz:
+
+### Electron Desktop Uygulaması Olarak Derleme
+
+```bash
+# electron-builder'ı yükleyin (tek seferlik)
+npm install
+
+# İşletim sisteminize göre derleyin:
+npm run build:mac      # macOS için .dmg
+npm run build:win      # Windows için .exe
+npm run build:linux    # Linux için AppImage
+```
+
+Derlenen dosyalar `dist/` klasöründe oluşur. Bu dosyaları Node.js olmayan bilgisayarlarda da çalıştırabilirsiniz.
+
+### Alternatif: Standalone Çalıştırma
+
+Node.js yüklü olmayan ortamlarda çalıştırmak için [pkg](https://github.com/vercel/pkg) kullanabilirsiniz:
+
+```bash
+# pkg'yi global yükleyin
+npm install -g pkg
+
+# Tek binary dosya oluşturun
+npm run package:mac
+npm run package:win
+npm run package:linux
+```
+
+---
+
 ## Özellikler
 
 ### Görsel Üretim
@@ -275,61 +354,22 @@ node index.js -s
 
 ### Electron Desktop App Derleme
 
-Electron uygulamasını dağıtılabilir .app veya .exe dosyası olarak derlemek için:
+Electron uygulamasını dağıtılabilir dosya olarak derlemek için:
 
 ```bash
-# electron-builder yükleyin
-npm install --save-dev electron-builder
+# Bağımlılıkları yükleyin (electron-builder dahil)
+npm install
 
-# macOS için .app dosyası oluştur
-npm run build:mac
+# İşletim sisteminize göre derleyin:
+npm run build:mac      # macOS için .dmg ve .zip
+npm run build:win      # Windows için .exe (NSIS installer ve portable)
+npm run build:linux    # Linux için AppImage ve .deb
 
-# Windows için .exe dosyası oluştur
-npm run build:win
-
-# Linux için AppImage oluştur
-npm run build:linux
+# Tüm platformlar için (sadece macOS'ta çalışır):
+npm run build:all
 ```
 
-**package.json'a eklenecek build script'leri:**
-
-```json
-{
-  "scripts": {
-    "app": "electron .",
-    "build:mac": "electron-builder --mac",
-    "build:win": "electron-builder --win",
-    "build:linux": "electron-builder --linux"
-  },
-  "build": {
-    "appId": "com.imageGenerator.app",
-    "productName": "Image Generator",
-    "files": [
-      "index.js",
-      "server.js",
-      "electron-main.js",
-      "preload.js",
-      "public/**/*",
-      "node_modules/**/*"
-    ],
-    "directories": {
-      "output": "dist"
-    },
-    "mac": {
-      "target": "dmg",
-      "icon": "icon.icns"
-    },
-    "win": {
-      "target": "nsis",
-      "icon": "icon.ico"
-    },
-    "linux": {
-      "target": "AppImage",
-      "icon": "icon.png"
-    }
-  }
-}
-```
+Derlenen dosyalar `dist/` klasöründe oluşur ve Node.js olmayan sistemlerde de çalışır.
 
 ### Web Server Olarak Deploy
 
@@ -399,10 +439,16 @@ npm run video          # Video üret
 npm run web            # Web sunucusu başlat (http://localhost:3000)
 npm run app            # Desktop uygulaması başlat
 
-# Derleme (electron-builder gerekli)
-npm run build:mac      # macOS .app oluştur
-npm run build:win      # Windows .exe oluştur
-npm run build:linux    # Linux AppImage oluştur
+# Electron derleme
+npm run build:mac      # macOS için .dmg ve .zip
+npm run build:win      # Windows için .exe (installer + portable)
+npm run build:linux    # Linux için AppImage ve .deb
+npm run build:all      # Tüm platformlar için derleme
+
+# Standalone binary derleme (pkg gerekli)
+npm run package:mac    # macOS için tek dosya
+npm run package:win    # Windows için tek dosya
+npm run package:linux  # Linux için tek dosya
 ```
 
 ## Proje Yapısı

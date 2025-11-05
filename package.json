@@ -11,7 +11,41 @@
     "mandelbrot": "node index.js -m",
     "video": "node index.js --video",
     "web": "node server.js",
-    "app": "electron ."
+    "app": "electron .",
+    "build:mac": "electron-builder --mac",
+    "build:win": "electron-builder --win",
+    "build:linux": "electron-builder --linux",
+    "build:all": "electron-builder -mwl",
+    "package:mac": "pkg index.js -t node18-macos-x64 -o dist/image-generator-mac",
+    "package:win": "pkg index.js -t node18-win-x64 -o dist/image-generator-win.exe",
+    "package:linux": "pkg index.js -t node18-linux-x64 -o dist/image-generator-linux"
+  },
+  "build": {
+    "appId": "com.imageGenerator.app",
+    "productName": "Image Generator",
+    "files": [
+      "index.js",
+      "server.js",
+      "electron-main.js",
+      "preload.js",
+      "public/**/*",
+      "node_modules/**/*"
+    ],
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "mac": {
+      "target": ["dmg", "zip"],
+      "category": "public.app-category.graphics-design"
+    },
+    "win": {
+      "target": ["nsis", "portable"]
+    },
+    "linux": {
+      "target": ["AppImage", "deb"],
+      "category": "Graphics"
+    }
   },
   "keywords": [
     "image-generator",
@@ -31,6 +65,7 @@
     "express": "^5.1.0"
   },
   "devDependencies": {
-    "electron": "^38.3.0"
+    "electron": "^38.3.0",
+    "electron-builder": "^25.1.8"
   }
 }
