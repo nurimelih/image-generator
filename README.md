@@ -1,3 +1,6 @@
+[Readme in Turkish](https://github.com/nurimelih/image-generator/blob/development/README.tr.md)
+
+
 # Image Generator
 
 A Node.js application that generates unique images for testing and mock purposes. Creates different visuals each time using Mandelbrot fractals and abstract patterns.
