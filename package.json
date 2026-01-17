@@ -3,13 +3,15 @@
   "version": "1.0.0",
   "description": "Generates unique timestamp images and videos with various patterns (Mandelbrot, waves, spirals, etc.)",
   "type": "module",
-  "main": "index.js",
+  "main": "electron-main.js",
   "scripts": {
     "start": "node index.js",
     "generate": "node index.js",
     "vertical": "node index.js -v",
     "mandelbrot": "node index.js -m",
-    "video": "node index.js --video"
+    "video": "node index.js --video",
+    "web": "node server.js",
+    "app": "electron ."
   },
   "keywords": [
     "image-generator",
@@ -23,5 +25,12 @@
   "license": "ISC",
   "engines": {
     "node": ">=14.0.0"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "electron": "^38.3.0"
   }
 }
