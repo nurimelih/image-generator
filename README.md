@@ -1,18 +1,18 @@
 # Image Generator
 
-Test ve mock amaçlı benzersiz görseller ureten Node.js uygulaması. Mandelbrot fraktallari ve soyut desenlerle her seferinde farkli goruntuler olusturur.
+A Node.js application that generates unique images for testing and mock purposes. Creates different visuals each time using Mandelbrot fractals and abstract patterns.
 
-## Neden?
+## Why?
 
-Yazilim testlerinde veya prototiplerde kullanmak icin hizlica benzersiz gorseller uretmek gerekebilir. Bu arac tam olarak bunu yapar - her calistirmada farkli renkler ve desenlerle yeni bir gorsel olusturur.
+Sometimes you need to quickly generate unique images for software testing or prototypes. This tool does exactly that - creates a new image with different colors and patterns on each run.
 
-## Kurulum
+## Installation
 
 ```bash
 npm install
 ```
 
-Video uretimi icin FFmpeg gereklidir:
+FFmpeg is required for video generation:
 ```bash
 # macOS
 brew install ffmpeg
@@ -21,65 +21,65 @@ brew install ffmpeg
 sudo apt install ffmpeg
 ```
 
-## Kullanim
+## Usage
 
-Uc farkli mod mevcut:
+Three different modes available:
 
-### Desktop Uygulamasi
+### Desktop Application
 
 ```bash
 npm run app
 ```
 
-Electron tabanli arayuz ile tum parametreleri gorsel olarak kontrol edebilirsiniz.
+Control all parameters visually with the Electron-based interface.
 
-### Web Arayuzu
+### Web Interface
 
 ```bash
 npm run web
 ```
 
-Tarayicinizda `http://localhost:3000` adresini acin.
+Open `http://localhost:3000` in your browser.
 
-### Komut Satiri
+### Command Line
 
 ```bash
-# Basit resim
+# Basic image
 node index.js
 
-# Dikey format (480x854)
+# Vertical format (480x854)
 node index.js -v
 
-# Sadece Mandelbrot fraktali
+# Mandelbrot fractal only
 node index.js -m
 
-# Ozel metin ekle
+# Add custom text
 node index.js -f "Test 001"
 
-# Video uret (10 saniye)
+# Generate video (10 seconds)
 node index.js --video
 
-# Parametreleri birlestirebilirsiniz
+# Combine parameters
 node index.js -v -m -f "Frame 42" -d ./output
 ```
 
-### Parametreler
+### Parameters
 
-| Parametre | Kisa | Aciklama |
-|-----------|------|----------|
-| `--vertical` | `-v` | Dikey format |
-| `--mandelbrot` | `-m` | Sadece Mandelbrot deseni |
-| `--frame` | `-f` | Gorsele metin ekle |
-| `--dir` | `-d` | Cikti dizini |
-| `--video` | `--mp4` | Video uret |
-| `--signature` | `-s` | Makineye ozgu tutarli stil |
+| Parameter | Short | Description |
+|-----------|-------|-------------|
+| `--vertical` | `-v` | Vertical format |
+| `--mandelbrot` | `-m` | Mandelbrot pattern only |
+| `--frame` | `-f` | Add text to image |
+| `--dir` | `-d` | Output directory |
+| `--video` | `--mp4` | Generate video |
+| `--signature` | `-s` | Machine-specific consistent style |
 
-## Cikti
+## Output
 
-- Resimler: BMP, 640x640 (veya dikey: 480x854)
-- Videolar: MP4, 10 saniye, 30 FPS
-- Varsayilan dizin: `./generated/`
+- Images: BMP, 640x640 (or vertical: 480x854)
+- Videos: MP4, 10 seconds, 30 FPS
+- Default directory: `./generated/`
 
-## Lisans
+## License
 
 MIT
